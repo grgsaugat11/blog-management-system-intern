@@ -92,7 +92,7 @@ WSGI_APPLICATION = 'config.wsgi.application'
 
 DATABASES = {
     'default': dj_database_url.config(
-        default=os.environ.get('DATABASE_URL')
+        'postgresql://blogdb_7rmi_user:QpPnZ8JO9Gdwu72r0a2dRGostOsITzlG@dpg-d86msubeo5us73c5orrg-a.ohio-postgres.render.com/blogdb_7rmi'
     )
 }
 
@@ -132,8 +132,8 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 
-MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / 'media'
+# MEDIA_URL = '/media/'
+# MEDIA_ROOT = BASE_DIR / 'media'
 
 LOGIN_REDIRECT_URL = 'home'
 LOGOUT_REDIRECT_URL = 'login'
