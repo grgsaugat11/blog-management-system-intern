@@ -25,13 +25,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-twsq7!vp2zpbt(7jlgseirj7#4rxjitj43$2obu*mo2kh4#mag'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
-ALLOWED_HOSTS = [
-    'localhost',
-    '127.0.0.1',
-    '.onrender.com'
-]
+ALLOWED_HOSTS = ['*']
+
 
 # Application definition
 
@@ -92,7 +89,8 @@ WSGI_APPLICATION = 'config.wsgi.application'
 
 DATABASES = {
     'default': dj_database_url.config(
-        'postgresql://blogdb_7rmi_user:QpPnZ8JO9Gdwu72r0a2dRGostOsITzlG@dpg-d86msubeo5us73c5orrg-a.ohio-postgres.render.com/blogdb_7rmi'
+        default='sqlite:///db.sqlite3',
+        conn_max_age=600
     )
 }
 
@@ -132,8 +130,8 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 
-# MEDIA_URL = '/media/'
-# MEDIA_ROOT = BASE_DIR / 'media'
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
 
 LOGIN_REDIRECT_URL = 'home'
 LOGOUT_REDIRECT_URL = 'login'
