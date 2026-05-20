@@ -11,7 +11,8 @@ class Post(models.Model):
     content = models.TextField()
 
     image = models.ImageField(
-        upload_to='post_images/',
+        # upload_to='post_images/',
+        upload_to='posts/',
         blank=True,
         null=True
     )
