@@ -92,7 +92,7 @@ WSGI_APPLICATION = 'config.wsgi.application'
 
 DATABASES = {
     'default': dj_database_url.config(
-        'postgresql://blogdb_7rmi_user:QpPnZ8JO9Gdwu72r0a2dRGostOsITzlG@dpg-d86msubeo5us73c5orrg-a.ohio-postgres.render.com/blogdb_7rmi'
+        default=os.environ.get('DATABASE_URL')
     )
 }
 
