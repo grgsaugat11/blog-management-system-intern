@@ -92,8 +92,7 @@ WSGI_APPLICATION = 'config.wsgi.application'
 
 DATABASES = {
     'default': dj_database_url.config(
-        default='sqlite:///db.sqlite3',
-        conn_max_age=600
+        'postgresql://blogdb_7rmi_user:QpPnZ8JO9Gdwu72r0a2dRGostOsITzlG@dpg-d86msubeo5us73c5orrg-a.ohio-postgres.render.com/blogdb_7rmi'
     )
 }
 
