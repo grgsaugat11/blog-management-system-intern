@@ -1,0 +1,221 @@
+{% extends 'blog/base.html' %} {% block content %}
+
+<div class="card border-0 shadow-lg rounded-4 overflow-hidden">
+  {% if post.image %}
+  <img
+    src="{{ post.image.url }}"
+    class="img-fluid"
+    style="max-height: 500px; object-fit: cover; width: 100%"
+  />
+  {% endif %}
+
+  <div class="card-body p-5">
+    {% if post.category %}
+    <span class="badge bg-primary mb-3"> {{ post.category }} </span>
+    {% endif %}
+
+    <h1 class="fw-bold mb-3">{{ post.title }}</h1>
+
+    <p class="text-muted mb-4">
+      By <strong>{{ post.author }}</strong>
+      • {{ post.created_at|date:"F d, Y" }}
+    </p>
+
+    <div class="fs-5 lh-lg text-secondary">{{ post.content|linebreaks }}</div>
+
+    <hr class="my-5" />
+
+    <!-- LIKE SECTION -->
+    <button id="like-btn" type="button" class="like-btn">
+      <span>❤️</span>
+      <span id="like-count">{{ post.likes.count }}</span>
+    </button>
+
+    <!-- AUTHOR CONTROLS -->
+    {% if user.is_authenticated and user == post.author %}
+
+    <div class="mb-5 mt-4">
+      <a
+        href="{% url 'update-post' post.pk %}"
+        class="btn action-btn edit-btn me-2"
+      >
+        Edit
+      </a>
+
+      <a
+        href="{% url 'delete-post' post.pk %}"
+        class="btn action-btn delete-btn"
+      >
+        Delete
+      </a>
+    </div>
+
+    {% endif %}
+
+    <!-- ADD GAP BETWEEN LIKE & COMMENTS -->
+    <div style="margin-top: 40px"></div>
+
+    <!-- COMMENTS -->
+    <h3 class="fw-bold mb-4">Comments ({{ comments.count }})</h3>
+
+    {% for comment in comments %}
+
+    <div class="card border-0 shadow-sm rounded-4 mb-3">
+      <div class="card-body">
+        <div class="d-flex justify-content-between">
+          <strong>{{ comment.user }}</strong>
+
+          <small class="text-muted">
+            {{ comment.created_at|date:"M d, Y" }}
+          </small>
+        </div>
+
+        <p class="mt-2 mb-0 text-secondary">{{ comment.content|linebreaks }}</p>
+      </div>
+    </div>
+
+    {% empty %}
+
+    <p class="text-muted">No comments yet. Be the first ✨</p>
+
+    {% endfor %}
+
+    <!-- COMMENT FORM -->
+    {% if user.is_authenticated %}
+
+    <div class="mt-5">
+      <h4 class="fw-bold mb-3">Leave a Comment</h4>
+
+      <div class="card border-0 shadow-sm rounded-4 p-3">
+        <form method="POST">
+          {% csrf_token %}
+
+          <textarea
+            name="content"
+            class="form-control comment-box"
+            rows="3"
+            placeholder="Write a comment..."
+          ></textarea>
+
+          <div class="d-flex justify-content-end mt-3">
+            <button type="submit" class="btn btn-dark rounded-pill px-4">
+              Post Comment
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    {% else %}
+
+    <div class="alert alert-info mt-4 rounded-4">
+      Please <a href="{% url 'login' %}">login</a> to write a comment.
+    </div>
+
+    {% endif %}
+  </div>
+</div>
+
+<!-- ================= STYLE ================= -->
+<style>
+  .like-btn {
+    background: white;
+    border: 1px solid #ddd;
+    padding: 8px 16px;
+    border-radius: 50px;
+    font-size: 16px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    transition: 0.25s ease;
+    color: #333;
+  }
+
+  /* hover effect */
+  .like-btn:hover {
+    transform: scale(1.05);
+  }
+
+  /* liked state = red background */
+  .like-btn.liked {
+    background: #e0245e;
+    color: white;
+    border-color: #e0245e;
+  }
+
+  /* comment box */
+  .comment-box {
+    border-radius: 12px;
+    padding: 12px;
+    border: 1px solid #ddd;
+    resize: none;
+  }
+
+  .comment-box:focus {
+    border-color: #000;
+    box-shadow: none;
+  }
+  .action-btn {
+    border-radius: 14px;
+    padding: 10px 22px;
+    font-weight: 500;
+    transition: all 0.25s ease;
+    border: none;
+  }
+
+  /* Edit */
+  .edit-btn {
+    background: #111827;
+    color: white;
+  }
+
+  .edit-btn:hover {
+    background: #1f2937;
+    transform: translateY(-2px);
+    color: white;
+  }
+
+  /* Delete */
+  .delete-btn {
+    background: #f3f4f6;
+    color: #111827;
+    border: 1px solid #e5e7eb;
+  }
+
+  .delete-btn:hover {
+    background: #e5e7eb;
+    transform: translateY(-2px);
+    color: #111827;
+  }
+</style>
+
+<!-- ================= SCRIPT ================= -->
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const likeBtn = document.getElementById("like-btn");
+
+    likeBtn.addEventListener("click", function () {
+      fetch("{% url 'like-post' post.pk %}", {
+        method: "POST",
+        headers: {
+          "X-CSRFToken": "{{ csrf_token }}",
+          "Content-Type": "application/json",
+        },
+      })
+        .then((res) => res.json())
+
+        .then((data) => {
+          document.getElementById("like-count").innerText = data.likes_count;
+
+          if (data.liked) {
+            likeBtn.classList.add("liked");
+          } else {
+            likeBtn.classList.remove("liked");
+          }
+        });
+    });
+  });
+</script>
+
+{% endblock %}

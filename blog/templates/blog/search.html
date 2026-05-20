@@ -1,0 +1,45 @@
+{% extends 'blog/base.html' %} {% block content %}
+
+<h1 class="fw-bold mb-4">Search Results for: "{{ query }}"</h1>
+
+{% if posts %} {% for post in posts %}
+
+<div class="card border-0 shadow-sm rounded-4 mb-4">
+  {% if post.image %}
+
+  <img
+    src="{{ post.image.url }}"
+    class="card-img-top"
+    style="height: 300px; object-fit: cover"
+  />
+
+  {% endif %}
+
+  <div class="card-body p-4">
+    {% if post.category %}
+
+    <span class="badge bg-primary mb-2"> {{ post.category }} </span>
+
+    {% endif %}
+
+    <h2>
+      <a href="{% url 'post-detail' post.pk %}" class="text-dark">
+        {{ post.title }}
+      </a>
+    </h2>
+
+    <p class="text-muted">
+      By {{ post.author }} • {{ post.created_at|date:"F d, Y" }}
+    </p>
+
+    <p>{{ post.content|striptags|truncatewords:25 }}</p>
+  </div>
+</div>
+
+{% endfor %} {% else %}
+
+<div class="alert alert-warning">
+  No posts found for "<strong>{{ query }}</strong>"
+</div>
+
+{% endif %} {% endblock %}

@@ -1,0 +1,108 @@
+{% extends 'blog/base.html' %} {% block content %}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h1 class="fw-bold">Latest Blog Posts</h1>
+</div>
+
+<form method="GET" class="mb-5">
+  <div class="input-group">
+    <input
+      type="text"
+      name="q"
+      class="form-control rounded-start-pill border-0 p-3"
+      placeholder="Search blogs..."
+      value="{{ query|default:'' }}"
+    />
+
+    <button class="btn btn-dark rounded-end-pill px-4" type="submit">
+      Search
+    </button>
+  </div>
+</form>
+
+{% for post in posts %}
+
+<div class="card border-0 shadow-sm rounded-4 mb-5 overflow-hidden">
+  {% if post.image %}
+  <img
+    src="{{ post.image.url }}"
+    class="card-img-top"
+    style="height: 350px; object-fit: cover"
+  />
+  {% endif %}
+
+  <div class="card-body p-4">
+    {% if post.category %}
+    <span class="badge bg-primary mb-3"> {{ post.category }} </span>
+    {% endif %}
+
+    <h2 class="fw-bold">
+      <a
+        href="{% url 'post-detail' post.pk %}"
+        class="text-decoration-none text-dark"
+      >
+        {{ post.title }}
+      </a>
+    </h2>
+
+    <p class="text-muted mb-3">
+      By <strong>{{ post.author }}</strong>
+      • {{ post.created_at|date:"F d, Y" }}
+    </p>
+
+    <p class="text-secondary">{{ post.content|striptags|truncatewords:30 }}</p>
+
+    <a
+      href="{% url 'post-detail' post.pk %}"
+      class="btn btn-dark rounded-pill px-4 mt-2"
+    >
+      Read More →
+    </a>
+  </div>
+</div>
+
+{% empty %}
+
+<div class="text-center mt-5">
+  <h3>No blog posts found 😢</h3>
+</div>
+
+{% endfor %}
+
+<!-- Pagination
+
+<div class="d-flex justify-content-center mt-4">
+
+    {% if posts.has_previous %}
+
+        <a href="?page=1"
+           class="btn btn-outline-dark me-2">
+            First
+        </a>
+
+        <a href="?page={{ posts.previous_page_number }}"
+           class="btn btn-outline-dark me-2">
+            Previous
+        </a>
+
+    {% endif %}
+
+    <span class="btn btn-dark">
+
+        Page {{ posts.number }}
+        of {{ posts.paginator.num_pages }}
+
+    </span>
+
+    {% if posts.has_next %}
+
+        <a href="?page={{ posts.next_page_number }}"
+           class="btn btn-outline-dark ms-2">
+            Next
+        </a>
+
+    {% endif %}
+
+</div> -->
+
+{% endblock %}

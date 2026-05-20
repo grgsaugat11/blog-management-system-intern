@@ -1,0 +1,197 @@
+{% extends 'blog/base.html' %} {% block content %}
+
+<div class="container">
+  <!-- PROFILE CARD -->
+
+  <div class="row justify-content-center">
+    <div class="col-lg-8">
+      <div class="card border-0 shadow-sm rounded-4 p-4 mb-4">
+        <div class="row align-items-center">
+          <!-- IMAGE -->
+
+          <div class="col-md-3 text-center">
+            {% if user.profile.image %}
+
+            <img
+              src="{{ user.profile.image.url }}"
+              class="rounded-circle shadow-sm"
+              width="120"
+              height="120"
+              style="object-fit: cover"
+            />
+
+            {% endif %}
+          </div>
+
+          <!-- DETAILS -->
+
+          <div class="col-md-9">
+            <div
+              class="d-flex justify-content-between align-items-start flex-wrap"
+            >
+              <div>
+                <h2 class="fw-bold mb-1">{{ user.username }}</h2>
+
+                <p class="text-muted mb-2">{{ user.email }}</p>
+              </div>
+
+              <!-- SIMPLE BUTTON -->
+
+              <button
+                onclick="toggleEditProfile()"
+                class="btn btn-outline-dark btn-sm rounded-pill px-3"
+              >
+                Edit Profile
+              </button>
+            </div>
+
+            <!-- BIO -->
+
+            {% if user.profile.bio %}
+
+            <p class="text-secondary mb-3">{{ user.profile.bio }}</p>
+
+            {% endif %}
+
+            <!-- STATS -->
+
+            <div class="d-flex gap-4">
+              <div>
+                <strong>{{ posts.count }}</strong>
+                <span class="text-muted">Posts</span>
+              </div>
+
+              <div>
+                <strong>{{ total_likes }}</strong>
+                <span class="text-muted">Likes</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- POSTS SECTION -->
+
+  <div class="row justify-content-center">
+    <div class="col-lg-8">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h4 class="fw-bold mb-0">Your Posts</h4>
+
+        <span class="text-muted"> {{ posts.count }} posts </span>
+      </div>
+    </div>
+  </div>
+
+  <!-- POSTS -->
+
+  <div class="row justify-content-center">
+    <div class="col-lg-8">
+      {% for post in posts %}
+
+      <div class="card border-0 shadow-sm rounded-4 mb-4 overflow-hidden">
+        {% if post.image %}
+
+        <img
+          src="{{ post.image.url }}"
+          class="card-img-top"
+          style="height: 300px; object-fit: cover"
+        />
+
+        {% endif %}
+
+        <div class="card-body p-4">
+          <h4 class="fw-bold">{{ post.title }}</h4>
+
+          <p class="text-muted small mb-3">
+            {{ post.created_at|date:"F d, Y" }}
+          </p>
+
+          <p class="text-secondary">
+            {{ post.content|striptags|truncatewords:30 }}
+          </p>
+
+          <a
+            href="{% url 'post-detail' post.pk %}"
+            class="btn btn-dark rounded-pill btn-sm px-4"
+          >
+            Read More
+          </a>
+        </div>
+      </div>
+
+      {% empty %}
+
+      <div class="text-center py-5">
+        <h5 class="text-muted">You haven't posted anything yet 😄</h5>
+      </div>
+
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+<!-- OVERLAY -->
+
+<div id="overlay" class="overlay"></div>
+
+<!-- EDIT PROFILE POPUP -->
+
+<div id="editPanel" class="edit-panel">
+  <h3 class="fw-bold mb-4">Edit Profile</h3>
+
+  <form method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+
+    <!-- USERNAME -->
+
+    <div class="mb-4">
+      <label class="form-label fw-semibold mb-2"> Username </label>
+
+      {{ form.username }}
+    </div>
+
+    <!-- PROFILE IMAGE -->
+
+    <div class="mb-4">
+      <label class="form-label fw-semibold mb-3"> Profile Picture </label>
+
+      {% if user.profile.image %}
+
+      <!-- <div class="remove-image-check mb-3">
+        {{ form.remove_image }}
+
+        <label for="{{ form.remove_image.id_for_label }}">
+          Remove current image
+        </label>
+      </div> -->
+
+      {% endif %} {{ form.image }}
+    </div>
+
+    <!-- BIO -->
+
+    <div class="mb-4">
+      <label class="form-label fw-semibold mb-2"> Bio </label>
+
+      {{ form.bio }}
+    </div>
+
+    <!-- BUTTONS -->
+
+    <div class="d-flex justify-content-end gap-2 mt-4">
+      <button
+        type="button"
+        onclick="toggleEditProfile()"
+        class="btn btn-light rounded-pill px-4"
+      >
+        Cancel
+      </button>
+
+      <button type="submit" class="btn btn-dark rounded-pill px-4">Save</button>
+    </div>
+  </form>
+</div>
+
+{% endblock %}
