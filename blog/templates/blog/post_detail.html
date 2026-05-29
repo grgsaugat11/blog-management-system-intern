@@ -63,12 +63,36 @@
 
     <div class="card border-0 shadow-sm rounded-4 mb-3">
       <div class="card-body">
-        <div class="d-flex justify-content-between">
-          <strong>{{ comment.user }}</strong>
+        <div class="d-flex justify-content-between align-items-start">
+          <div>
+            <strong>{{ comment.user }}</strong>
 
-          <small class="text-muted">
-            {{ comment.created_at|date:"M d, Y" }}
-          </small>
+            <br />
+
+            <small class="text-muted">
+              {{ comment.created_at|date:"M d, Y" }}
+            </small>
+          </div>
+
+          {% if user == comment.user %}
+
+          <div class="d-flex gap-2">
+            <a
+              href="{% url 'edit-comment' comment.pk %}"
+              class="btn btn-sm btn-outline-dark rounded-pill px-3"
+            >
+              Edit
+            </a>
+
+            <a
+              href="{% url 'delete-comment' comment.pk %}"
+              class="btn btn-sm btn-outline-danger rounded-pill px-3"
+            >
+              Delete
+            </a>
+          </div>
+
+          {% endif %}
         </div>
 
         <p class="mt-2 mb-0 text-secondary">{{ comment.content|linebreaks }}</p>
