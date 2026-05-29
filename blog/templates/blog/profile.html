@@ -157,28 +157,30 @@
   <!-- ACTIVITY FEED -->
 
   <div class="row justify-content-center mt-4">
-    <div class="col-lg-8">
-      <h4 class="fw-bold mb-4">Recent Activity</h4>
+  <div class="col-lg-8">
+    <h4 class="fw-bold mb-4">Recent Activity</h4>
+
+    <div class="card border-0 shadow-sm rounded-4 p-4">
 
       {% for activity in activities %}
 
-      <div class="card border-0 shadow-sm rounded-4 p-4 mb-3">
-        <div class="border-bottom pb-2 mb-2">
-          <p class="mb-1 fw-semibold">{{ activity.action }}</p>
+      <div class="border-bottom pb-2 mb-2">
+        <p class="mb-1 fw-semibold">{{ activity.action }}</p>
 
-          <small class="text-muted">
-            {{ activity.created_at|date:"M d, Y • h:i A" }}
-          </small>
-        </div>
+        <small class="text-muted">
+          {{ activity.created_at|date:"M d, Y • h:i A" }}
+        </small>
       </div>
 
       {% empty %}
 
-      <p class="text-muted">No activity yet.</p>
+      <p class="text-muted mb-0">No activity yet.</p>
 
       {% endfor %}
+
     </div>
   </div>
+</div>
 </div>
 
 <!-- OVERLAY -->
