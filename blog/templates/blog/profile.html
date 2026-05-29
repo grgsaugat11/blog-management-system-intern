@@ -132,28 +132,28 @@
   </div>
   
   <!-- FAVORITES -->
+  <div class="row justify-content-center mt-4">
+    <div class="col-lg-8">
+      <h4 class="fw-bold mb-4">Favorite Blogs ⭐</h4>
 
-  <div class="col-lg-8">
-    <h4 class="fw-bold mb-4">Favorite Blogs ⭐</h4>
+      {% for favorite in favorites %}
 
-    {% for favorite in favorites %}
+      <div class="card border-0 shadow-sm rounded-4 mb-3 p-3">
+        <a
+          href="{% url 'post-detail' favorite.post.pk %}"
+          class="text-dark text-decoration-none fw-bold"
+        >
+          {{ favorite.post.title }}
+        </a>
+      </div>
 
-    <div class="card border-0 shadow-sm rounded-4 mb-3 p-3">
-      <a
-        href="{% url 'post-detail' favorite.post.pk %}"
-        class="text-dark text-decoration-none fw-bold"
-      >
-        {{ favorite.post.title }}
-      </a>
+      {% empty %}
+
+      <p class="text-muted">No favorites yet.</p>
+
+      {% endfor %}
     </div>
-
-    {% empty %}
-
-    <p class="text-muted">No favorites yet.</p>
-
-    {% endfor %}
   </div>
-
   <!-- ACTIVITY FEED -->
 
   <div class="row justify-content-center mt-4">
