@@ -164,7 +164,7 @@
 
       {% for activity in activities %}
 
-      <div class="border-bottom pb-2 mb-2">
+      <div class="{% if not forloop.last %}border-bottom{% endif %} pb-2 mb-2">
         <p class="mb-1 fw-semibold">{{ activity.action }}</p>
 
         <small class="text-muted">
