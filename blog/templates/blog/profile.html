@@ -84,6 +84,29 @@
     </div>
   </div>
 
+  <!-- FAVORITES -->
+
+  <div class="mt-5">
+    <h4 class="fw-bold mb-4">Favorite Blogs ⭐</h4>
+
+    {% for favorite in favorites %}
+
+    <div class="card border-0 shadow-sm rounded-4 mb-3 p-3">
+      <a
+        href="{% url 'post-detail' favorite.post.pk %}"
+        class="text-dark text-decoration-none fw-bold"
+      >
+        {{ favorite.post.title }}
+      </a>
+    </div>
+
+    {% empty %}
+
+    <p class="text-muted">No favorites yet.</p>
+
+    {% endfor %}
+  </div>
+
   <!-- POSTS -->
 
   <div class="row justify-content-center">
@@ -128,6 +151,32 @@
       </div>
 
       {% endfor %}
+    </div>
+  </div>
+
+  <!-- ACTIVITY FEED -->
+
+  <div class="row justify-content-center mt-4">
+    <div class="col-lg-8">
+      <div class="card border-0 shadow-sm rounded-4 p-4">
+        <h4 class="fw-bold mb-4">Recent Activity</h4>
+
+        {% for activity in activities %}
+
+        <div class="border-bottom pb-2 mb-2">
+          <p class="mb-1 fw-semibold">{{ activity.action }}</p>
+
+          <small class="text-muted">
+            {{ activity.created_at|date:"M d, Y • h:i A" }}
+          </small>
+        </div>
+
+        {% empty %}
+
+        <p class="text-muted">No activity yet.</p>
+
+        {% endfor %}
+      </div>
     </div>
   </div>
 </div>

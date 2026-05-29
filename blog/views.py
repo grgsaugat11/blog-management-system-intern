@@ -5,7 +5,7 @@ from django.contrib import messages
 from django.http import JsonResponse
 from django.db.models import Q
 
-from .models import Post, Profile
+from .models import Post, Profile, Favorite, Comment, Activity
 from .forms import (
     PostForm,
     CommentForm,
@@ -26,7 +26,8 @@ def home(request):
 
         posts = posts.filter(
             Q(title__icontains=query) |
-            Q(content__icontains=query)
+            Q(content__icontains=query) |
+            Q(author__username__icontains=query)
         )
 
     context = {
@@ -59,6 +60,10 @@ def post_detail(request, pk):
                 comment.user = request.user
 
                 comment.save()
+                Activity.objects.create(
+                    user=request.user,
+                    action=f"Commented on: {post.title}"
+                )
 
                 return redirect('post-detail', pk=pk)
 
@@ -74,6 +79,36 @@ def post_detail(request, pk):
 
     })
 
+# ================= FAVORITE POST =================
+
+@login_required
+def toggle_favorite(request, pk):
+
+    post = get_object_or_404(Post, pk=pk)
+
+    favorite = Favorite.objects.filter(
+        user=request.user,
+        post=post
+    )
+
+    if favorite.exists():
+
+        favorite.delete()
+
+        favorited = False
+
+    else:
+
+        Favorite.objects.create(
+            user=request.user,
+            post=post
+        )
+
+        favorited = True
+
+    return JsonResponse({
+        'favorited': favorited
+    })
 
 # ================= CREATE POST =================
 
@@ -91,6 +126,10 @@ def create_post(request):
             post.author = request.user
 
             post.save()
+            Activity.objects.create(
+                user=request.user,
+                action=f"Created a post: {post.title}"
+            )
 
             return redirect('home')
 
@@ -154,6 +193,75 @@ def delete_post(request, pk):
 
     return redirect('home')
 
+# ================= EDIT COMMENT =================
+
+@login_required
+def edit_comment(request, pk):
+
+    comment = get_object_or_404(Comment, pk=pk)
+
+    # only comment owner can edit
+    if request.user != comment.user:
+        return redirect('home')
+
+    if request.method == 'POST':
+
+        form = CommentForm(
+            request.POST,
+            instance=comment
+        )
+
+        if form.is_valid():
+
+            form.save()
+
+            Activity.objects.create(
+                user=request.user,
+                action=f"Edited a comment on: {comment.post.title}"
+            )
+
+            return redirect(
+                'post-detail',
+                pk=comment.post.pk
+            )
+
+    else:
+
+        form = CommentForm(instance=comment)
+
+    return render(
+        request,
+        'blog/edit_comment.html',
+        {
+            'form': form,
+            'comment': comment
+        }
+    )
+
+# ================= DELETE COMMENT =================
+
+@login_required
+def delete_comment(request, pk):
+
+    comment = get_object_or_404(Comment, pk=pk)
+
+    if request.user == comment.user:
+
+        Activity.objects.create(
+            user=request.user,
+            action=f"Deleted a comment on: {comment.post.title}"
+        )
+
+        post_pk = comment.post.pk
+
+        comment.delete()
+
+        return redirect(
+            'post-detail',
+            pk=post_pk
+        )
+
+    return redirect('home')
 
 # ================= LIKE POST =================
 
@@ -173,6 +281,10 @@ def like_post(request, pk):
         post.likes.add(request.user)
 
         liked = True
+        Activity.objects.create(
+            user=request.user,
+            action=f"Liked post: {post.title}"
+        )
 
     return JsonResponse({
 
@@ -227,13 +339,23 @@ def profile(request):
             instance=profile,
             user=request.user
         )
+    
+    favorites = Favorite.objects.filter(
+        user=request.user
+    )
+    
+    activities = Activity.objects.filter(
+        user=request.user
+    ).order_by('-created_at')[:10]
 
     return render(request, 'blog/profile.html', {
 
         'form': form,
         'posts': posts,
         'total_posts': posts.count(),
-        'total_likes': total_likes
+        'total_likes': total_likes,
+        'favorites': favorites,
+        'activities': activities
 
     })
 

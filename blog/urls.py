@@ -11,4 +11,7 @@ urlpatterns = [
     # path('search/', views.search, name='search'),
     path('profile/', views.profile, name='profile'),
     path('like/<int:pk>/', views.like_post, name='like-post'),
+    path('favorite/<int:pk>/',views.toggle_favorite,name='toggle-favorite'),
+    path('comment/<int:pk>/edit/',views.edit_comment,name='edit-comment'),
+    path('comment/<int:pk>/delete/',views.delete_comment,name='delete-comment'),
 ]

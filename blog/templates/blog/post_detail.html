@@ -30,6 +30,7 @@
       <span>❤️</span>
       <span id="like-count">{{ post.likes.count }}</span>
     </button>
+    <button id="favorite-btn" class="favorite-btn">⭐ Favorite</button>
 
     <!-- AUTHOR CONTROLS -->
     {% if user.is_authenticated and user == post.author %}
@@ -188,6 +189,26 @@
     transform: translateY(-2px);
     color: #111827;
   }
+
+  .favorite-btn {
+    background: white;
+    border: 1px solid #ddd;
+    padding: 8px 18px;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: 0.25s ease;
+    margin-left: 10px;
+  }
+
+  .favorite-btn:hover {
+    transform: scale(1.05);
+  }
+
+  .favorite-btn.active {
+    background: gold;
+    border-color: gold;
+    color: black;
+  }
 </style>
 
 <!-- ================= SCRIPT ================= -->
@@ -212,6 +233,26 @@
             likeBtn.classList.add("liked");
           } else {
             likeBtn.classList.remove("liked");
+          }
+        });
+    });
+    const favoriteBtn = document.getElementById("favorite-btn");
+
+    favoriteBtn.addEventListener("click", function () {
+      fetch("{% url 'toggle-favorite' post.pk %}", {
+        method: "POST",
+
+        headers: {
+          "X-CSRFToken": "{{ csrf_token }}",
+        },
+      })
+        .then((res) => res.json())
+
+        .then((data) => {
+          if (data.favorited) {
+            favoriteBtn.classList.add("active");
+          } else {
+            favoriteBtn.classList.remove("active");
           }
         });
     });
